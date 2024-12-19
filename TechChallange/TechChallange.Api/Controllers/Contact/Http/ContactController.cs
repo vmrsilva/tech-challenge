@@ -34,7 +34,9 @@ namespace TechChallange.Api.Controllers.Contact.Http
         {
             var contacts = await _contactService.GetByDddAsync(ddd).ConfigureAwait(false);
 
-            return Ok(contacts);
+            var response = _mapper.Map<IEnumerable<ContactResponseDto>>(contacts);
+
+            return Ok(response);
         }
 
         [HttpGet("all")]
@@ -43,6 +45,7 @@ namespace TechChallange.Api.Controllers.Contact.Http
             var contacts = await _contactService.GetAllAsync().ConfigureAwait(false);
 
             var response = _mapper.Map<IEnumerable<ContactResponseDto>>(contacts);
+
             return Ok(response);
         }
 
