@@ -2,10 +2,12 @@
 using Microsoft.EntityFrameworkCore;
 using TechChallange.Api.Mapper;
 using TechChallange.Domain.Base.Repository;
+using TechChallange.Domain.Cache;
 using TechChallange.Domain.Contact.Repository;
 using TechChallange.Domain.Contact.Service;
 using TechChallange.Domain.Region.Repository;
 using TechChallange.Domain.Region.Service;
+using TechChallange.Infrastructure.Cache;
 using TechChallange.Infrastructure.Context;
 using TechChallange.Infrastructure.Repository.Base;
 using TechChallange.Infrastructure.Repository.Contact;
@@ -22,6 +24,7 @@ namespace TechChallange.Api.DomainInjection
             ConfigureRegion(services);
             ConfigureContact(services);
             AddMapper(services, configuration);
+            ConfigureCache(services, configuration);
 
             return services;
         }
@@ -58,6 +61,15 @@ namespace TechChallange.Api.DomainInjection
             services.AddSingleton(mapper);
 
             return services;
+        }
+
+        public static void ConfigureCache(IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddStackExchangeRedisCache(options => {
+                options.InstanceName = nameof(CacheRepository);
+                options.Configuration = configuration.GetConnectionString("Cache");
+            });
+            services.AddScoped<ICacheRepository, CacheRepository>();
         }
 
     }

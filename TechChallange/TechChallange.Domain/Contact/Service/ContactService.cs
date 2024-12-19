@@ -1,4 +1,5 @@
-﻿using TechChallange.Domain.Contact.Entity;
+﻿using TechChallange.Domain.Cache;
+using TechChallange.Domain.Contact.Entity;
 using TechChallange.Domain.Contact.Exception;
 using TechChallange.Domain.Contact.Repository;
 
@@ -7,10 +8,12 @@ namespace TechChallange.Domain.Contact.Service
     public class ContactService : IContactService
     {
         private readonly IContactRepository _contactRepository;
+        private readonly ICacheRepository _cacheRepository;
 
-        public ContactService(IContactRepository contactRepository)
+        public ContactService(IContactRepository contactRepository, ICacheRepository cacheRepository)
         {
             _contactRepository = contactRepository;
+            _cacheRepository = cacheRepository;
         }
 
         public async Task CreateAsync(ContactEntity contactEntity)
@@ -20,12 +23,12 @@ namespace TechChallange.Domain.Contact.Service
 
         public async Task<IEnumerable<ContactEntity>> GetAllAsync()
         {
-            return await _contactRepository.GetAllAsync();
+            return await _cacheRepository.GetValueAsync("allContacts", async () => await _contactRepository.GetAllAsync().ConfigureAwait(false)); 
         }
 
         public async Task<IEnumerable<ContactEntity>> GetByDddAsync(string ddd)
         {
-            return await _contactRepository.GetByDddAsync(ddd).ConfigureAwait(false);
+            return await _cacheRepository.GetValueAsync(ddd, async () => await _contactRepository.GetByDddAsync(ddd).ConfigureAwait(false));
         }
 
         public async Task<ContactEntity> GetByIdAsync(Guid id)
@@ -35,7 +38,7 @@ namespace TechChallange.Domain.Contact.Service
             if (contactDb == null)
                 throw new ContactNotFoundException();
 
-                return contactDb;
+            return contactDb;
         }
 
         public async Task RemoveByIdAsync(Guid id)
