@@ -2,7 +2,7 @@
 {
     public record RegionCreateDto
     {
-        public string Name { get; init; }
-        public string Ddd { get; init; }
+        public required string Name { get; init; }
+        public required string Ddd { get; init; }
     }
 }
