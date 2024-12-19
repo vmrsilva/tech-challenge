@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using TechChallange.Api.Controllers.Region.Dto;
 using TechChallange.Domain.Region.Entity;
+using TechChallange.Domain.Region.Exception;
 using TechChallange.Domain.Region.Service;
 
 namespace TechChallange.Api.Controllers.Region.Http
@@ -23,7 +24,7 @@ namespace TechChallange.Api.Controllers.Region.Http
         public async Task<IActionResult> CreateAsync([FromBody] RegionCreateDto region)
         {
             var regionEntity = _mapper.Map<RegionEntity>(region);
-            await _regionService.Create(regionEntity).ConfigureAwait(false);
+            await _regionService.CreateAsync(regionEntity).ConfigureAwait(false);
 
             return Ok();
         }
@@ -31,7 +32,7 @@ namespace TechChallange.Api.Controllers.Region.Http
         [HttpGet("get-by-id/{id}")]
         public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
-            var regionEntity = await _regionService.GetById(id).ConfigureAwait(false);
+            var regionEntity = await _regionService.GetByIdAsync(id).ConfigureAwait(false);
             var regionDto = _mapper.Map<RegionResponseDto>(regionEntity);
             return Ok(regionDto);
         }
@@ -42,6 +43,50 @@ namespace TechChallange.Api.Controllers.Region.Http
             var regionEntity = await _regionService.GetByDdd(ddd).ConfigureAwait(false);
             var regionDto = _mapper.Map<RegionResponseDto>(regionEntity);
             return Ok(regionDto);
+        }
+
+        [HttpGet("get-all")]
+        public async Task<IActionResult> GetAllAsync()
+        {
+            var regions = await _regionService.GetAllAsync().ConfigureAwait(false);
+
+            var response = _mapper.Map<IEnumerable<RegionResponseDto>>(regions);
+
+            return Ok(response);
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> PutAsync([FromBody] RegionUpdateDto regionDto)
+        {
+            try
+            {
+                var regionEntity = _mapper.Map<RegionEntity>(regionDto);
+
+                await _regionService.UpdateAsync(regionEntity).ConfigureAwait(false);
+
+                return Ok();
+            }
+            catch (RegionNotFoundException)
+            {
+                return BadRequest("Região não encontrada na base de dados.");
+            }
+
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteAsync([FromRoute] Guid id)
+        {
+            try
+            {
+                await _regionService.DeleteByIdAsync(id).ConfigureAwait(false);
+
+                return Ok();
+            }
+            catch (RegionNotFoundException)
+            {
+                return BadRequest("Registro não encontrado na base de dados.");
+            }
+
         }
     }
 }

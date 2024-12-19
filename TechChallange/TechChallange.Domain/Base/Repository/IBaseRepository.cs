@@ -18,6 +18,8 @@ namespace TechChallange.Domain.Base.Repository
         Task<T> GetByIdAsync(Guid id);
 
         public Task<T> GetAsync(Expression<Func<T, bool>> search);
-        
+
+        public Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> search);
+
     }
 }

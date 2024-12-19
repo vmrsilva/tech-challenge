@@ -18,6 +18,11 @@ namespace TechChallange.Infrastructure.Repository.Region
             await _baseRepository.AddAsync(entity).ConfigureAwait(false);
         }
 
+        public async Task<IEnumerable<RegionEntity>> GetAllAsync()
+        {
+            return await _baseRepository.GetAllAsync(r => !r.IsDeleted);
+        }
+
         public async Task<RegionEntity> GetByDddAsync(string ddd)
         {
             return await _baseRepository.GetAsync(r => r.Ddd == ddd).ConfigureAwait(false);

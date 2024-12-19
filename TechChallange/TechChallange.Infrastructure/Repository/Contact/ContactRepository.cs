@@ -22,6 +22,11 @@ namespace TechChallange.Infrastructure.Repository.Contact
             await _baseRepository.AddAsync(contact).ConfigureAwait(false);
         }
 
+        public async Task<IEnumerable<ContactEntity>> GetAllAsync()
+        {
+            return await _baseRepository.GetAllAsync(c => !c.IsDeleted).ConfigureAwait(false);
+        }
+
         public async Task<IEnumerable<ContactEntity>> GetByDddAsync(string ddd)
         {
             using (_techChallangeContext)
@@ -37,11 +42,6 @@ namespace TechChallange.Infrastructure.Repository.Contact
         public async Task<ContactEntity> GetByIdAsync(Guid id)
         {
             return await _baseRepository.GetByIdAsync(id).ConfigureAwait(false);
-        }
-
-        public async Task RemoveByIdAsync(Guid id)
-        {
-            await _baseRepository.UpdateAsync(null);
         }
 
         public async Task UpdateAsync(ContactEntity contact)

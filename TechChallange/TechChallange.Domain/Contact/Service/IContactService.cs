@@ -10,14 +10,16 @@ namespace TechChallange.Domain.Contact.Service
 {
     public interface IContactService
     {
-        Task Create(ContactEntity contactEntity);
+        Task CreateAsync(ContactEntity contactEntity);
 
-        Task<ContactEntity> GetById(Guid id);
+        Task<ContactEntity> GetByIdAsync(Guid id);
 
         Task<IEnumerable<ContactEntity>> GetByDddAsync(string ddd);
 
-        Task DeleteByDdd(string ddd);
+        Task RemoveByIdAsync(Guid id);
+
         Task UpdateAsync(ContactEntity contact);
+        Task<IEnumerable<ContactEntity>> GetAllAsync();
 
     }
 }

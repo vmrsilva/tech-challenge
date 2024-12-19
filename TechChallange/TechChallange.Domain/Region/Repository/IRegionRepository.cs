@@ -18,6 +18,8 @@ namespace TechChallange.Domain.Region.Repository
 
         Task<RegionEntity> GetByDddAsync(string ddd);
 
-        
+        Task<IEnumerable<RegionEntity>> GetAllAsync();
+
+
     }
 }

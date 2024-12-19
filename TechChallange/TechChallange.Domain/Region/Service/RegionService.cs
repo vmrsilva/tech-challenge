@@ -1,5 +1,6 @@
 ﻿using TechChallange.Domain.Base.Repository;
 using TechChallange.Domain.Region.Entity;
+using TechChallange.Domain.Region.Exception;
 using TechChallange.Domain.Region.Repository;
 
 namespace TechChallange.Domain.Region.Service
@@ -13,21 +14,27 @@ namespace TechChallange.Domain.Region.Service
             _regionRepository = regionRepository;
         }
 
-        public async Task Create(RegionEntity regionEntity)
+        public async Task CreateAsync(RegionEntity regionEntity)
         {
             await _regionRepository.AddAsync(regionEntity).ConfigureAwait(false);
         }
 
-        public async Task DeleteByDdd(string ddd)
+        public async Task DeleteByIdAsync(Guid id)
         {
-            var regionDb = await _regionRepository.GetByDddAsync(ddd).ConfigureAwait(false);
+            var regionDb = await _regionRepository.GetByIdAsync(id).ConfigureAwait(false);
 
-            if (regionDb != null)
-            {
-                regionDb.MarkAsDeleted();
+            if (regionDb == null)
+                throw new RegionNotFoundException();
 
-                await _regionRepository.UpdateAsync(regionDb).ConfigureAwait(false);    
-            }
+            regionDb.MarkAsDeleted();
+
+            await _regionRepository.UpdateAsync(regionDb).ConfigureAwait(false);
+
+        }
+
+        public async Task<IEnumerable<RegionEntity>> GetAllAsync()
+        {
+            return await _regionRepository.GetAllAsync().ConfigureAwait(false);
         }
 
         public async Task<RegionEntity> GetByDdd(string ddd)
@@ -35,9 +42,22 @@ namespace TechChallange.Domain.Region.Service
             return await _regionRepository.GetByDddAsync(ddd).ConfigureAwait(false);
         }
 
-        public async Task<RegionEntity> GetById(Guid id)
+        public async Task<RegionEntity> GetByIdAsync(Guid id)
         {
             return await _regionRepository.GetByIdAsync(id).ConfigureAwait(false);
+        }
+
+        public async Task UpdateAsync(RegionEntity regionEntity)
+        {
+            var regionDb = await GetByIdAsync(regionEntity.Id).ConfigureAwait(false);
+
+            if (regionDb == null)
+                throw new RegionNotFoundException();
+
+            regionDb.Name = regionEntity.Name;
+            regionDb.Ddd = regionEntity.Ddd;
+
+            await _regionRepository.UpdateAsync(regionDb).ConfigureAwait(false);
         }
     }
 }

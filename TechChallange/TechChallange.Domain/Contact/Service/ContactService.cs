@@ -13,14 +13,14 @@ namespace TechChallange.Domain.Contact.Service
             _contactRepository = contactRepository;
         }
 
-        public async Task Create(ContactEntity contactEntity)
+        public async Task CreateAsync(ContactEntity contactEntity)
         {
             await _contactRepository.Create(contactEntity).ConfigureAwait(false);
         }
 
-        public Task DeleteByDdd(string ddd)
+        public async Task<IEnumerable<ContactEntity>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            return await _contactRepository.GetAllAsync();
         }
 
         public async Task<IEnumerable<ContactEntity>> GetByDddAsync(string ddd)
@@ -28,9 +28,26 @@ namespace TechChallange.Domain.Contact.Service
             return await _contactRepository.GetByDddAsync(ddd).ConfigureAwait(false);
         }
 
-        public async Task<ContactEntity> GetById(Guid id)
+        public async Task<ContactEntity> GetByIdAsync(Guid id)
         {
-            return await _contactRepository.GetByIdAsync(id).ConfigureAwait(false);
+            var contactDb = await _contactRepository.GetByIdAsync(id).ConfigureAwait(false);
+
+            if (contactDb == null)
+                throw new ContactNotFoundException();
+
+                return contactDb;
+        }
+
+        public async Task RemoveByIdAsync(Guid id)
+        {
+            var contactDb = await _contactRepository.GetByIdAsync(id).ConfigureAwait(false);
+
+            if (contactDb == null)
+                throw new ContactNotFoundException();
+
+            contactDb.MarkAsDeleted();
+
+            await _contactRepository.UpdateAsync(contactDb).ConfigureAwait(false);
         }
 
         public async Task UpdateAsync(ContactEntity contact)
@@ -47,5 +64,7 @@ namespace TechChallange.Domain.Contact.Service
 
             await _contactRepository.UpdateAsync(contact).ConfigureAwait(false);
         }
+
+
     }
 }

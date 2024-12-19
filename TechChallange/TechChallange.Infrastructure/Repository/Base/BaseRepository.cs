@@ -26,18 +26,25 @@ namespace TechChallange.Infrastructure.Repository.Base
             await _context.SaveChangesAsync().ConfigureAwait(false);
         }
 
+        public async Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> search)
+        {
+            return await _context.Set<T>()
+                     .AsNoTracking()
+                     .Where(search).ToListAsync().ConfigureAwait(false); 
+        }
+
         public async Task<T> GetAsync(Expression<Func<T, bool>> search)
         {
             return await _context.Set<T>()
                 .AsNoTracking()
                 .Where(search)
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync().ConfigureAwait(false);
         }
 
         public async Task<T> GetByIdAsync(Guid id)
         {
             var dbSet = _context.Set<T>();
-            var entity = await dbSet.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id).ConfigureAwait(false);
+            var entity = await dbSet.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id && !x.IsDeleted).ConfigureAwait(false);
             return entity;
         }
 
