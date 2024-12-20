@@ -1,4 +1,6 @@
 ﻿using TechChallange.Domain.Base.Repository;
+using TechChallange.Domain.Cache;
+using TechChallange.Domain.Contact.Repository;
 using TechChallange.Domain.Region.Entity;
 using TechChallange.Domain.Region.Exception;
 using TechChallange.Domain.Region.Repository;
@@ -8,10 +10,12 @@ namespace TechChallange.Domain.Region.Service
     public class RegionService : IRegionService
     {
         private readonly IRegionRepository _regionRepository;
+        private readonly ICacheRepository _cacheRepository;
 
-        public RegionService(IRegionRepository regionRepository)
+        public RegionService(IRegionRepository regionRepository, ICacheRepository cacheRepository)
         {
             _regionRepository = regionRepository;
+            _cacheRepository = cacheRepository;
         }
 
         public async Task CreateAsync(RegionEntity regionEntity)
@@ -34,7 +38,7 @@ namespace TechChallange.Domain.Region.Service
 
         public async Task<IEnumerable<RegionEntity>> GetAllAsync()
         {
-            return await _regionRepository.GetAllAsync().ConfigureAwait(false);
+            return await _cacheRepository.GetValueAsync("allRegions", async () => await _regionRepository.GetAllAsync().ConfigureAwait(false));
         }
 
         public async Task<RegionEntity> GetByDdd(string ddd)
