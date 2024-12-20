@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using TechChallange.Api.Mapper;
+using TechChallange.Api.Validators.Contact;
 using TechChallange.Domain.Base.Repository;
 using TechChallange.Domain.Cache;
 using TechChallange.Domain.Contact.Repository;
@@ -25,6 +27,7 @@ namespace TechChallange.Api.DomainInjection
             ConfigureContact(services);
             AddMapper(services, configuration);
             ConfigureCache(services, configuration);
+            AddValidators(services, configuration);
 
             return services;
         }
@@ -72,5 +75,12 @@ namespace TechChallange.Api.DomainInjection
             services.AddScoped<ICacheRepository, CacheRepository>();
         }
 
+        public static IServiceCollection AddValidators(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddValidatorsFromAssemblyContaining<ContactCreateValidator>();
+            services.AddValidatorsFromAssemblyContaining<ContactUpdateValidator>();
+
+            return services;
+        }
     }
 }
