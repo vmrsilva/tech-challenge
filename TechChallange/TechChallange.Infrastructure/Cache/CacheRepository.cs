@@ -14,8 +14,8 @@ namespace TechChallange.Infrastructure.Cache
             _cache = cache;
             _options = new DistributedCacheEntryOptions
             {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(300),
-                SlidingExpiration = TimeSpan.FromSeconds(1200),
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(60),
+                SlidingExpiration = TimeSpan.FromSeconds(60),
             };
         }
 
@@ -53,7 +53,7 @@ namespace TechChallange.Infrastructure.Cache
         {
             var json = Serialize(t);
 
-            await _cache.SetStringAsync(key, json);
+            await _cache.SetStringAsync(key, json, _options);
         }
 
         private static T Deserialize<T>(string json)
