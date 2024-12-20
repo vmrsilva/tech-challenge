@@ -1,6 +1,4 @@
-﻿using TechChallange.Domain.Base.Repository;
-using TechChallange.Domain.Cache;
-using TechChallange.Domain.Contact.Repository;
+﻿using TechChallange.Domain.Cache;
 using TechChallange.Domain.Region.Entity;
 using TechChallange.Domain.Region.Exception;
 using TechChallange.Domain.Region.Repository;
@@ -33,7 +31,6 @@ namespace TechChallange.Domain.Region.Service
             regionDb.MarkAsDeleted();
 
             await _regionRepository.UpdateAsync(regionDb).ConfigureAwait(false);
-
         }
 
         public async Task<IEnumerable<RegionEntity>> GetAllAsync()

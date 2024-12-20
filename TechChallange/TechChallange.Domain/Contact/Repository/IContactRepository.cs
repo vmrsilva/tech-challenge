@@ -1,5 +1,4 @@
-﻿using System.Linq.Expressions;
-using TechChallange.Domain.Contact.Entity;
+﻿using TechChallange.Domain.Contact.Entity;
 
 namespace TechChallange.Domain.Contact.Repository
 {

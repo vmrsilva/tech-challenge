@@ -1,9 +1,7 @@
 ﻿using AutoMapper;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
-using TechChallange.Api.Controllers.Contact.Dto;
 using TechChallange.Api.Controllers.Region.Dto;
-using TechChallange.Api.Validators.Region;
 using TechChallange.Domain.Region.Entity;
 using TechChallange.Domain.Region.Exception;
 using TechChallange.Domain.Region.Service;

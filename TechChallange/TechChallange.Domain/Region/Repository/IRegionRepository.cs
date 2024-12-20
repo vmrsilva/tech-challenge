@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TechChallange.Domain.Region.Entity;
+﻿using TechChallange.Domain.Region.Entity;
 
 namespace TechChallange.Domain.Region.Repository
 {
@@ -11,15 +6,9 @@ namespace TechChallange.Domain.Region.Repository
     {
         Task AddAsync(RegionEntity entity);
         Task RemoveByIdAsync(Guid id);
-
         Task UpdateAsync(RegionEntity entity);
-
         Task<RegionEntity> GetByIdAsync(Guid id);
-
         Task<RegionEntity> GetByDddAsync(string ddd);
-
         Task<IEnumerable<RegionEntity>> GetAllAsync();
-
-
     }
 }

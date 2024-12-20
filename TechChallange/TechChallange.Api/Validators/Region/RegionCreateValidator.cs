@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using TechChallange.Api.Controllers.Contact.Dto;
 using TechChallange.Api.Controllers.Region.Dto;
 
 namespace TechChallange.Api.Validators.Region
