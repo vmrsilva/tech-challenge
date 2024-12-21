@@ -14,30 +14,17 @@ namespace TechChallange.Api.Controllers.Region.Http
     {
         private readonly IRegionService _regionService;
         private readonly IMapper _mapper;
-        private readonly IValidator<RegionCreateDto> _validateCreate;
-        private readonly IValidator<RegionUpdateDto> _validateUpdate;
 
-        public RegionController(IRegionService regionService, 
-                                IMapper mapper,
-                                IValidator<RegionCreateDto> validateCreate,
-                                IValidator<RegionUpdateDto> _validateUpdate)
+        public RegionController(IRegionService regionService,
+                                IMapper mapper)
         {
             _regionService = regionService;
             _mapper = mapper;
-            _validateCreate = validateCreate;
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateAsync([FromBody] RegionCreateDto regionDto)
         {
-
-            var result = _validateCreate.Validate(regionDto);
-
-            if (!result.IsValid)
-            {
-                var errorMessages = result.Errors.Select(x => x.ErrorMessage).ToList();
-                return BadRequest(errorMessages);
-            }
             var regionEntity = _mapper.Map<RegionEntity>(regionDto);
             await _regionService.CreateAsync(regionEntity).ConfigureAwait(false);
 
@@ -75,14 +62,6 @@ namespace TechChallange.Api.Controllers.Region.Http
         {
             try
             {
-                var result = _validateUpdate.Validate(regionDto);
-
-                if (!result.IsValid)
-                {
-                    var errorMessages = result.Errors.Select(x => x.ErrorMessage).ToList();
-                    return BadRequest(errorMessages);
-                }
-
                 var regionEntity = _mapper.Map<RegionEntity>(regionDto);
 
                 await _regionService.UpdateAsync(regionEntity).ConfigureAwait(false);

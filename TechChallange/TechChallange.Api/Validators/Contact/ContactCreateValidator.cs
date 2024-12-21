@@ -18,9 +18,11 @@ namespace TechChallange.Api.Validators.Contact
              .WithMessage("O nome não pode exceder 50 caracteres.");
 
             RuleFor(c => c.Phone)
+                .NotEmpty()
+                .WithMessage("O telefone é obrigatório")
             .Matches(@"^\+?[1-9]\d{1,14}$")
-            .WithMessage("Número de telefone inválido.")
-            .When(c => !string.IsNullOrEmpty(c.Phone));
+            .WithMessage("Número de telefone inválido.");
+            //.When(c => !string.IsNullOrEmpty(c.Phone));
 
             RuleFor(c => c.RegionId)
              .NotEmpty()

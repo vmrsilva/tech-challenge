@@ -14,30 +14,17 @@ namespace TechChallange.Api.Controllers.Contact.Http
     {
         private readonly IContactService _contactService;
         private readonly IMapper _mapper;
-        private readonly IValidator<ContactCreateDto> _validateCreate;
-        private readonly IValidator<ContactUpdateDto> _validateUpdate;
 
         public ContactController(IContactService contactService, 
-                                IMapper mapper, 
-                                IValidator<ContactCreateDto> validateCreate,
-                                IValidator<ContactUpdateDto> validateUpdate)
+                                IMapper mapper)
         {
             _contactService = contactService;
             _mapper = mapper;
-            _validateCreate = validateCreate;
-            _validateUpdate = validateUpdate;
         }
+
         [HttpPost]
         public async Task<IActionResult> CreateAsync([FromBody] ContactCreateDto contactDto)
         {
-            var result = _validateCreate.Validate(contactDto);
-
-            if (!result.IsValid)
-            {
-                var errorMessages = result.Errors.Select(x => x.ErrorMessage).ToList();
-                return BadRequest(errorMessages);
-            }
-
             var contactEntity = _mapper.Map<ContactEntity>(contactDto);
 
             await _contactService.CreateAsync(contactEntity).ConfigureAwait(false);
@@ -88,14 +75,6 @@ namespace TechChallange.Api.Controllers.Contact.Http
         {
             try
             {
-                var result = _validateUpdate.Validate(contactDto);
-
-                if (!result.IsValid)
-                {
-                    var errorMessages = result.Errors.Select(x => x.ErrorMessage).ToList();
-                    return BadRequest(errorMessages);
-                }
-
                 var contactEntity = _mapper.Map<ContactEntity>(contactDto);
 
                 await _contactService.UpdateAsync(contactEntity).ConfigureAwait(false);
