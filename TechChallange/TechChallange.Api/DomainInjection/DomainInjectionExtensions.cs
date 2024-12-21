@@ -27,7 +27,6 @@ namespace TechChallange.Api.DomainInjection
             ConfigureContact(services);
             AddMapper(services, configuration);
             ConfigureCache(services, configuration);
-            //AddValidators(services, configuration);
 
             return services;
         }
@@ -74,13 +73,5 @@ namespace TechChallange.Api.DomainInjection
             });
             services.AddScoped<ICacheRepository, CacheRepository>();
         }
-
-        //public static IServiceCollection AddValidators(this IServiceCollection services, IConfiguration configuration)
-        //{
-        //    services.AddValidatorsFromAssemblyContaining<ContactCreateValidator>();
-        //    services.AddValidatorsFromAssemblyContaining<ContactUpdateValidator>();
-
-        //    return services;
-        //}
     }
 }
