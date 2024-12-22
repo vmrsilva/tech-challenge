@@ -2,7 +2,7 @@
 {
     public class RegionNotFoundException : System.Exception
     {
-        public RegionNotFoundException() : base()
+        public RegionNotFoundException() : base(message: "Região não encontrada na base dados.")
         {
 
         }

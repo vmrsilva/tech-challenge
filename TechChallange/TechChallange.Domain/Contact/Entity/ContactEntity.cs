@@ -13,7 +13,14 @@ namespace TechChallange.Domain.Contact.Entity
         [MaxLength(80)]
         public string Email { get; set; }
         public Guid RegionId { get; set; }
-        public virtual RegionEntity Region { get; set; }
+        public virtual RegionEntity? Region { get; set; }
 
+        public ContactEntity(string name, string phone, string email, Guid regionId)
+        {
+            Name = name;
+            Phone = phone;
+            Email = email;
+            RegionId = regionId;
+        }
     }
 }

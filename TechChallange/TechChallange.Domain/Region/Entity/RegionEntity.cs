@@ -10,6 +10,12 @@ namespace TechChallange.Domain.Region.Entity
         public string Name { get; set; }
         [MaxLength(3)]
         public string Ddd { get; set; }
-        public  IList<ContactEntity> Contacts { get; set; }
+        public  IList<ContactEntity>? Contacts { get; set; }
+
+        public RegionEntity(string name, string ddd)
+        {
+            Name = name;
+            Ddd = ddd;
+        }
     }
 }

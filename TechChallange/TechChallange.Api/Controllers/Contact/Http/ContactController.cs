@@ -63,9 +63,13 @@ namespace TechChallange.Api.Controllers.Contact.Http
 
                 return Ok(response);
             }
-            catch (ContactNotFoundException)
+            catch (ContactNotFoundException ex)
             {
-                return BadRequest("Contato não encontrado na base de dados.");
+                return BadRequest(ex.Message);
+            }
+            catch (Exception)
+            {
+                return BadRequest("Ocorreu um erro!");
             }
 
         }
@@ -81,9 +85,13 @@ namespace TechChallange.Api.Controllers.Contact.Http
 
                 return Ok();
             }
-            catch (ContactNotFoundException)
+            catch (ContactNotFoundException ex)
             {
-                return BadRequest("Contato informado não existe na base de dados.");
+                return BadRequest(ex.Message);
+            }
+            catch (Exception)
+            {
+                return BadRequest("Ocorreu um erro!");
             }
         }
 
@@ -94,9 +102,13 @@ namespace TechChallange.Api.Controllers.Contact.Http
             {
                 await _contactService.RemoveByIdAsync(id).ConfigureAwait(false);
             }
-            catch (ContactNotFoundException)
+            catch (ContactNotFoundException ex)
             {
-                return BadRequest("Contato informado não encontrado na base de dados");
+                return BadRequest(ex.Message);
+            }
+            catch (Exception)
+            {
+                return BadRequest("Ocorreu um erro!");
             }
 
             return Ok();

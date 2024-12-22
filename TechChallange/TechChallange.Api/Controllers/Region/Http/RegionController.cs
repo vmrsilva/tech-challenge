@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using TechChallange.Api.Controllers.Region.Dto;
 using TechChallange.Domain.Region.Entity;
@@ -25,10 +24,22 @@ namespace TechChallange.Api.Controllers.Region.Http
         [HttpPost]
         public async Task<IActionResult> CreateAsync([FromBody] RegionCreateDto regionDto)
         {
-            var regionEntity = _mapper.Map<RegionEntity>(regionDto);
-            await _regionService.CreateAsync(regionEntity).ConfigureAwait(false);
+            try
+            {
+                var regionEntity = _mapper.Map<RegionEntity>(regionDto);
+                await _regionService.CreateAsync(regionEntity).ConfigureAwait(false);
 
-            return Ok();
+                return Ok();
+            }
+            catch (RegionAlreadyExistsException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception)
+            {
+                return BadRequest("Ocorreu um erro!");
+            }
+
         }
 
         [HttpGet("get-by-id/{id}")]
@@ -68,9 +79,13 @@ namespace TechChallange.Api.Controllers.Region.Http
 
                 return Ok();
             }
-            catch (RegionNotFoundException)
+            catch (RegionNotFoundException ex)
             {
-                return BadRequest("Região não encontrada na base de dados.");
+                return BadRequest(ex.Message);
+            }
+            catch (Exception)
+            {
+                return BadRequest("Ocorreu um erro!");
             }
 
         }
@@ -84,9 +99,13 @@ namespace TechChallange.Api.Controllers.Region.Http
 
                 return Ok();
             }
-            catch (RegionNotFoundException)
+            catch (RegionNotFoundException ex)
             {
-                return BadRequest("Registro não encontrado na base de dados.");
+                return BadRequest(ex.Message);
+            }
+            catch (Exception)
+            {
+                return BadRequest("Ocorreu um erro!");
             }
 
         }

@@ -2,7 +2,7 @@
 {
     public class ContactNotFoundException : System.Exception
     {
-        public ContactNotFoundException() : base()
+        public ContactNotFoundException() : base(message: "Contato não encontrado na base de dados.")
         {
 
         }

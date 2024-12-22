@@ -2,7 +2,7 @@
 {
     public class RegionAlreadyExistsException : System.Exception
     {
-        public RegionAlreadyExistsException() : base()
+        public RegionAlreadyExistsException() : base(message: "Região já cadastrada.")
         {
 
         }
