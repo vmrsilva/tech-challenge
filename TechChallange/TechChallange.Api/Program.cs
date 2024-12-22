@@ -1,7 +1,6 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using TechChallange.Api.DomainInjection;
-using TechChallange.Api.Validators.Contact;
 
 var builder = WebApplication.CreateBuilder(args);
 
