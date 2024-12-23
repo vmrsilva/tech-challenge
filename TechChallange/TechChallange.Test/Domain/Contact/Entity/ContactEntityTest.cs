@@ -36,5 +36,22 @@ namespace TechChallange.Test.Domain.Contact.Entity
             Assert.Equal(contactDto.Email, entity.Email);
             Assert.Equal(contactDto.RegionId, entity.RegionId);
         }
+
+        [Fact(DisplayName = "Should Set IsDeleted Equal True When Call MarkAsDeleted")]
+        public void ShouldSetIsDeletedEqualTrueWhenCallMarkAsDeleted()
+        {
+            var fixture = new Fixture();
+            fixture.Customize<ContactCreateDto>(c => c
+                .With(p => p.Email, () => fixture.Create<string>() + "@example.com"));
+
+            var contactDto = fixture.Create<ContactCreateDto>();
+
+            var entity = _mapper.Map<ContactEntity>(contactDto);
+
+            entity.MarkAsDeleted();
+
+            Assert.True(entity.IsDeleted);
+        }
+
     }
 }
