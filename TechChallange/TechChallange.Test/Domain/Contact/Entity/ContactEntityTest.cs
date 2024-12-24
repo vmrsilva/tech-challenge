@@ -52,6 +52,5 @@ namespace TechChallange.Test.Domain.Contact.Entity
 
             Assert.True(entity.IsDeleted);
         }
-
     }
 }
