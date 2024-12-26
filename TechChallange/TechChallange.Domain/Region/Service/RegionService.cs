@@ -40,7 +40,7 @@ namespace TechChallange.Domain.Region.Service
 
         public async Task<IEnumerable<RegionEntity>> GetAllAsync()
         {
-            return await _cacheRepository.GetValueAsync("allRegions", async () => await _regionRepository.GetAllAsync().ConfigureAwait(false));
+            return await _cacheRepository.GetAsync("allRegions", async () => await _regionRepository.GetAllAsync().ConfigureAwait(false));
         }
 
         public async Task<RegionEntity> GetByDdd(string ddd)
@@ -50,7 +50,12 @@ namespace TechChallange.Domain.Region.Service
 
         public async Task<RegionEntity> GetByIdAsync(Guid id)
         {
-            return await _regionRepository.GetByIdAsync(id).ConfigureAwait(false);
+           var result = await _regionRepository.GetByIdAsync(id).ConfigureAwait(false);
+
+            if (result == null)
+                throw new RegionNotFoundException();
+
+            return result;
         }
 
         public async Task UpdateAsync(RegionEntity regionEntity)

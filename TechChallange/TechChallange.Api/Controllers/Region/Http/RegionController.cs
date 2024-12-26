@@ -45,9 +45,21 @@ namespace TechChallange.Api.Controllers.Region.Http
         [HttpGet("get-by-id/{id}")]
         public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
-            var regionEntity = await _regionService.GetByIdAsync(id).ConfigureAwait(false);
-            var regionDto = _mapper.Map<RegionResponseDto>(regionEntity);
-            return Ok(regionDto);
+            try
+            {
+                var regionEntity = await _regionService.GetByIdAsync(id).ConfigureAwait(false);
+                var regionDto = _mapper.Map<RegionResponseDto>(regionEntity);
+                return Ok(regionDto);
+            }
+            catch (RegionNotFoundException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception)
+            {
+                return BadRequest("Ocorreu um erro");
+            }
+
         }
 
         [HttpGet("get-by-ddd/{ddd}")]

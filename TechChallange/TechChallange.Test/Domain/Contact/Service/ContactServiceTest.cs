@@ -109,49 +109,23 @@ namespace TechChallange.Test.Domain.Contact.Service
             _contactRepositoryMock.Verify(cr => cr.GetByIdAsync(It.IsAny<Guid>()), Times.Once);
         }
 
-        [Fact]
-        public async Task ShouldGetAll()
+        [Fact(DisplayName = "Should GetAll Return List Of Contacts")]
+        public async Task ShouldGetAllReturnListOfContacts()
         {
-            // var contactRepositoryMock = new Mock<IContactRepository>();
-            // var cacheMock = new Mock<ICacheRepository>();
-            // var contactServiceMock = new ContactService(contactRepositoryMock.Object, cacheMock.Object);
-            // var contactMock = new ContactEntity("Test", "12345678", "mail@test.com", Guid.NewGuid());
-
-
-            // contactRepositoryMock.Setup(cr => cr.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync(contactMock);
-
-            // var result = await contactServiceMock.GetAllAsync();
-
-            // contactRepositoryMock.Verify(cr => cr.GetAllAsync(), Times.Once);
-            //cacheMock.Verify(c => c.GetValueAsync<ContactEntity>(It.IsAny<string>()), Times.Once);
-            // cacheMock.Verify(c => c.SetValueAsync<IEnumerable<ContactEntity>>(It.IsAny<string>(), It.IsAny<IEnumerable<ContactEntity>>()), Times.Once);
-
-            // Arrange
-            var contactRepositoryMock = new Mock<IContactRepository>();
-            var cacheMock = new Mock<ICacheRepository>();
-            var contactService = new ContactService(contactRepositoryMock.Object, cacheMock.Object);
-
             var contactMock = new ContactEntity("Test", "12345678", "mail@test.com", Guid.NewGuid());
             var contactsList = new List<ContactEntity> { contactMock };
 
-            contactRepositoryMock
+            _contactRepositoryMock
                 .Setup(cr => cr.GetAllAsync())
                 .ReturnsAsync(contactsList);
 
-            cacheMock
-                .Setup(c => c.GetValueAsync<IEnumerable<ContactEntity>>("allContacts"))
-                .ReturnsAsync((IEnumerable<ContactEntity>)null);
+            _cacheRepositoryMock.Setup(c => c.GetAsync<IEnumerable<ContactEntity>>(It.IsAny<string>(), It.IsAny<Func<Task<IEnumerable<ContactEntity>>>>()))
+                                .ReturnsAsync((IEnumerable<ContactEntity>)contactsList);
 
-            // Act
-            var result = await contactService.GetAllAsync();
+            var result = await _contactServiceMock.GetAllAsync();
 
-            // Assert
-            contactRepositoryMock.Verify(cr => cr.GetAllAsync(), Times.Once);
-            cacheMock.Verify(c => c.GetValueAsync<IEnumerable<ContactEntity>>("allContacts"), Times.Once);
-            cacheMock.Verify(c => c.SetValueAsync("allContacts", It.IsAny<IEnumerable<ContactEntity>>()), Times.Once);
-
+            _cacheRepositoryMock.Verify(c => c.GetAsync<IEnumerable<ContactEntity>>(It.IsAny<string>(), It.IsAny<Func<Task<IEnumerable<ContactEntity>>>>()), Times.Once);
             Assert.NotNull(result);
-            Assert.Single(result);
             Assert.Equal(contactMock, result.First());
         }
     }

@@ -26,7 +26,7 @@ namespace TechChallange.Infrastructure.Cache
             return !string.IsNullOrEmpty(redisValue) ? Deserialize<T>(redisValue) : default;
         }
 
-        public async Task<T> GetValueAsync<T>(string key, Func<Task<T>> producer)
+        public async Task<T> GetAsync<T>(string key, Func<Task<T>> producer)
         {
             try
             {
