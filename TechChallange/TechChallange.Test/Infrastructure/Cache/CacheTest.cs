@@ -1,15 +1,8 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Moq;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TechChallange.Domain.Cache;
 using TechChallange.Domain.Region.Entity;
-using TechChallange.Domain.Region.Repository;
 using TechChallange.Infrastructure.Cache;
 
 namespace TechChallange.Test.Infrastructure.Cache
