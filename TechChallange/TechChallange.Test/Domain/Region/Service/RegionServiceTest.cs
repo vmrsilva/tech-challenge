@@ -31,6 +31,20 @@ namespace TechChallange.Test.Domain.Region.Service
             _regionRepositoryMock.Verify(rr => rr.AddAsync(It.IsAny<RegionEntity>()), Times.Once);
         }
 
+
+        [Fact(DisplayName = "Should Create Throw Exception When Ddd Already Exist")]
+        public async Task ShouldCreateThrowExceptionWhenDddAlreadyExist()
+        {
+            var regionMock = new RegionEntity("Test", "11");
+
+            _regionRepositoryMock.Setup(cr => cr.GetByDddAsync(It.IsAny<string>())).ReturnsAsync((regionMock));
+
+            await Assert.ThrowsAsync<RegionAlreadyExistsException>(() => _regionServiceMock.CreateAsync(regionMock));
+
+            _regionRepositoryMock.Verify(rr => rr.AddAsync(It.IsAny<RegionEntity>()), Times.Never);
+            _regionRepositoryMock.Verify(rr => rr.GetByDddAsync(It.IsAny<string>()), Times.Once);
+        }
+
         [Fact(DisplayName = "Should Delete A Region")]
         public async Task ShouldDeleteARegion()
         {
