@@ -6,12 +6,12 @@ namespace TechChallange.Infrastructure.Cache
 {
     public class CacheRepository : ICacheRepository
     {
-        private readonly IDistributedCache _cache;
+        private readonly ICacheWrapper _cacheWrapper;
         private readonly DistributedCacheEntryOptions _options;
 
-        public CacheRepository(IDistributedCache cache)
+        public CacheRepository(ICacheWrapper cacheWrapper)
         {
-            _cache = cache;
+            _cacheWrapper = cacheWrapper;
             _options = new DistributedCacheEntryOptions
             {
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(60),
@@ -21,7 +21,7 @@ namespace TechChallange.Infrastructure.Cache
 
         public async Task<T> GetValueAsync<T>(string key)
         {
-            var redisValue = await _cache.GetStringAsync(key).ConfigureAwait(false);
+            var redisValue = await _cacheWrapper.GetStringAsync(key).ConfigureAwait(false);
 
             return !string.IsNullOrEmpty(redisValue) ? Deserialize<T>(redisValue) : default;
         }
@@ -53,7 +53,7 @@ namespace TechChallange.Infrastructure.Cache
         {
             var json = Serialize(t);
 
-            await _cache.SetStringAsync(key, json, _options);
+            await _cacheWrapper.SetStringAsync(key, json, _options);
         }
 
         private static T Deserialize<T>(string json)

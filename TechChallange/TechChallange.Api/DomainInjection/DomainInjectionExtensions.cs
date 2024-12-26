@@ -72,6 +72,7 @@ namespace TechChallange.Api.DomainInjection
                 options.Configuration = configuration.GetConnectionString("Cache");
             });
             services.AddScoped<ICacheRepository, CacheRepository>();
+            services.AddScoped<ICacheWrapper, CacheWrapper>();
         }
     }
 }
