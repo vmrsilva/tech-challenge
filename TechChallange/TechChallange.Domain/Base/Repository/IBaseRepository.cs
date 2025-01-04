@@ -15,6 +15,7 @@ namespace TechChallange.Domain.Base.Repository
         public Task<T> GetAsync(Expression<Func<T, bool>> search);
 
         public Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> search);
+        Task<T> GetOneWithIncludeAsync(Expression<Func<T, bool>> search, params Expression<Func<T, object>>[] includes);
 
     }
 }

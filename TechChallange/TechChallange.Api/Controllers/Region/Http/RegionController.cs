@@ -70,6 +70,14 @@ namespace TechChallange.Api.Controllers.Region.Http
             return Ok(regionDto);
         }
 
+        [HttpGet("get-ddd-with-contacts/{ddd}")]
+        public async Task<IActionResult> GetByDddWithContacts([FromRoute] string ddd)
+        {
+            var regionEntity = await _regionService.GetByDddWithContacts(ddd).ConfigureAwait(false);
+            var regionDto = _mapper.Map<RegionWithContactsResponseDto>(regionEntity);
+            return Ok(regionDto);
+        }
+
         [HttpGet("get-all")]
         public async Task<IActionResult> GetAllAsync()
         {

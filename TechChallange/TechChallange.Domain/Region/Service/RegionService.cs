@@ -48,6 +48,11 @@ namespace TechChallange.Domain.Region.Service
             return await _regionRepository.GetByDddAsync(ddd).ConfigureAwait(false);
         }
 
+        public async Task<RegionEntity> GetByDddWithContacts(string ddd)
+        {
+            return await _regionRepository.GetByDddWithContactsAsync(ddd).ConfigureAwait(false);
+        }
+
         public async Task<RegionEntity> GetByIdAsync(Guid id)
         {
            var result = await _regionRepository.GetByIdAsync(id).ConfigureAwait(false);

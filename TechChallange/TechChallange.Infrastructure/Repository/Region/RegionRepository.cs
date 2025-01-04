@@ -28,6 +28,11 @@ namespace TechChallange.Infrastructure.Repository.Region
             return await _baseRepository.GetAsync(r => r.Ddd == ddd).ConfigureAwait(false);
         }
 
+        public async Task<RegionEntity> GetByDddWithContactsAsync(string ddd)
+        {
+            return await _baseRepository.GetOneWithIncludeAsync(r => r.Ddd == ddd, r => r.Contacts).ConfigureAwait(false);
+        }
+
         public async Task<RegionEntity> GetByIdAsync(Guid id)
         {
             return await _baseRepository.GetByIdAsync(id).ConfigureAwait(false);    

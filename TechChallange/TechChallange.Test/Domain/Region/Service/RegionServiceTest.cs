@@ -1,6 +1,6 @@
 ﻿using Moq;
 using TechChallange.Domain.Cache;
-using TechChallange.Domain.Contact.Exception;
+using TechChallange.Domain.Contact.Entity;
 using TechChallange.Domain.Region.Entity;
 using TechChallange.Domain.Region.Exception;
 using TechChallange.Domain.Region.Repository;
@@ -86,7 +86,6 @@ namespace TechChallange.Test.Domain.Region.Service
             _regionRepositoryMock.Verify(rr => rr.UpdateAsync(It.IsAny<RegionEntity>()), Times.Once);
         }
 
-
         [Fact(DisplayName = "Should Update Throw Exception When Region Does Not Exist")]
         public async Task ShouldUpdateThrowExceptionWhenRegionDoesNotExist()
         {
@@ -134,6 +133,22 @@ namespace TechChallange.Test.Domain.Region.Service
             var result = await _regionServiceMock.GetByDdd(mockDdd);
 
             _regionRepositoryMock.Verify(rr => rr.GetByDddAsync(It.IsAny<string>()), Times.Once);
+            Assert.NotNull(result);
+        }
+
+        [Fact(DisplayName = "Should Get By Ddd With Contacts Return Region")]
+        public async Task ShouldGetByDddWithContactsReturnRegion()
+        {
+            var mockDdd = "11";
+            var regionMock = new RegionEntity("Test", mockDdd);
+            regionMock.Contacts = new List<ContactEntity>();
+            regionMock.Contacts.Add(new ContactEntity("Name Mock", "01234567", "mail@mock.com", Guid.NewGuid()));
+
+            _regionRepositoryMock.Setup(cr => cr.GetByDddWithContactsAsync(It.IsAny<string>())).ReturnsAsync(regionMock);
+
+            var result = await _regionServiceMock.GetByDddWithContacts(mockDdd);
+
+            _regionRepositoryMock.Verify(rr => rr.GetByDddWithContactsAsync(It.IsAny<string>()), Times.Once);
             Assert.NotNull(result);
         }
     }

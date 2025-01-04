@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using System.Linq.Expressions;
 using TechChallange.Domain.Base.Entity;
 using TechChallange.Domain.Base.Repository;
@@ -41,6 +42,20 @@ namespace TechChallange.Infrastructure.Repository.Base
             var dbSet = _context.Set<T>();
             var entity = await dbSet.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id && !x.IsDeleted).ConfigureAwait(false);
             return entity;
+        }
+
+        public async Task<T> GetOneWithIncludeAsync(Expression<Func<T, bool>> search, params Expression<Func<T, object>>[] includes)
+        {
+            IQueryable<T> query = _context.Set<T>()
+                .AsNoTracking()
+                .Where(search);
+
+            foreach (var include in includes)
+            {
+                query = query.Include(include);
+            }
+
+            return await query.FirstOrDefaultAsync().ConfigureAwait(false);
         }
 
         public async Task RemoveByIdAsync(Guid id)

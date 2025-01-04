@@ -10,5 +10,7 @@ namespace TechChallange.Domain.Region.Service
         Task DeleteByIdAsync(Guid id);
         Task<IEnumerable<RegionEntity>> GetAllAsync();
         Task UpdateAsync(RegionEntity regionEntity);
+
+        Task<RegionEntity> GetByDddWithContacts(string ddd);
     }
 }

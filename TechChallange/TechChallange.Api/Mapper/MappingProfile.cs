@@ -12,6 +12,7 @@ namespace TechChallange.Api.Mapper
         {
             CreateMap<RegionCreateDto, RegionEntity>();
             CreateMap<RegionEntity, RegionResponseDto>();
+            CreateMap<RegionEntity, RegionWithContactsResponseDto>();
             CreateMap<RegionUpdateDto, RegionEntity>();
 
             CreateMap<ContactCreateDto, ContactEntity>();
