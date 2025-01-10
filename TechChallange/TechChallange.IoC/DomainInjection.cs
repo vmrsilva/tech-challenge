@@ -1,8 +1,6 @@
-﻿using AutoMapper;
-using FluentValidation;
-using Microsoft.EntityFrameworkCore;
-using TechChallange.Api.Mapper;
-using TechChallange.Api.Validators.Contact;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using TechChallange.Domain.Base.Repository;
 using TechChallange.Domain.Cache;
 using TechChallange.Domain.Contact.Repository;
@@ -15,20 +13,17 @@ using TechChallange.Infrastructure.Repository.Base;
 using TechChallange.Infrastructure.Repository.Contact;
 using TechChallange.Infrastructure.Repository.Region;
 
-namespace TechChallange.Api.DomainInjection
+namespace TechChallange.IoC
 {
-    public static class DomainInjectionExtensions
+    public static class DomainInjection
     {
-        public static IServiceCollection AddInfraestructure(this IServiceCollection services, IConfiguration configuration)
+        public static void AddInfraestructure(this IServiceCollection services, IConfiguration configuration)
         {
             ConfigureContext(services, configuration);
             ConfigureBase(services);
             ConfigureRegion(services);
             ConfigureContact(services);
-            AddMapper(services, configuration);
             ConfigureCache(services, configuration);
-
-            return services;
         }
 
         public static void ConfigureContext(IServiceCollection services, IConfiguration configuration)
@@ -51,20 +46,6 @@ namespace TechChallange.Api.DomainInjection
             services.AddScoped<IContactRepository, ContactRepository>();
             services.AddScoped<IContactService, ContactService>();
         }
-
-        public static IServiceCollection AddMapper(this IServiceCollection services, IConfiguration configuration)
-        {
-            var mapperConfig = new MapperConfiguration(mc =>
-            {
-                mc.AddProfile(new MappingProfile());
-            });
-
-            IMapper mapper = mapperConfig.CreateMapper();
-            services.AddSingleton(mapper);
-
-            return services;
-        }
-
         public static void ConfigureCache(IServiceCollection services, IConfiguration configuration)
         {
             services.AddStackExchangeRedisCache(options => {
