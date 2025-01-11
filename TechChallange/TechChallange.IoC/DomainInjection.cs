@@ -29,6 +29,12 @@ namespace TechChallange.IoC
         public static void ConfigureContext(IServiceCollection services, IConfiguration configuration)
         {
             services.AddDbContext<TechChallangeContext>(options => options.UseSqlServer(configuration.GetConnectionString("Database")));
+
+            using (var serviceProvider = services.BuildServiceProvider())
+            {
+                var dbContext = serviceProvider.GetRequiredService<TechChallangeContext>();
+                dbContext.Database.Migrate();
+            }
         }
 
         public static void ConfigureBase(IServiceCollection services)
