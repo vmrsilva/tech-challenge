@@ -1,4 +1,6 @@
-﻿using TechChallange.Domain.Contact.Entity;
+﻿using System.Linq.Expressions;
+using TechChallange.Domain.Contact.Entity;
+using TechChallange.Domain.Region.Entity;
 
 namespace TechChallange.Domain.Contact.Service
 {
@@ -9,6 +11,7 @@ namespace TechChallange.Domain.Contact.Service
         Task<IEnumerable<ContactEntity>> GetByDddAsync(string ddd);
         Task RemoveByIdAsync(Guid id);
         Task UpdateAsync(ContactEntity contact);
-        Task<IEnumerable<ContactEntity>> GetAllAsync();
+        Task<IEnumerable<ContactEntity>> GetAllPagedAsync(int pageSize, int page);
+        Task<int> GetCountAsync();
     }
 }

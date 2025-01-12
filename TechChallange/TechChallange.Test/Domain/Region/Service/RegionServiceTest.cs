@@ -1,4 +1,5 @@
 ﻿using Moq;
+using System.Linq.Expressions;
 using TechChallange.Domain.Cache;
 using TechChallange.Domain.Contact.Entity;
 using TechChallange.Domain.Region.Entity;
@@ -112,6 +113,20 @@ namespace TechChallange.Test.Domain.Region.Service
             Assert.NotNull(result);
         }
 
+
+        [Fact(DisplayName = "Should Get By Id Cached Return Region")]
+        public async Task ShouldGetByIdCachedReturnRegion()
+        {
+            var regionMock = new RegionEntity("Test", "11");
+            _cacheRepositoryMock.Setup(c => c.GetAsync<RegionEntity>(It.IsAny<string>(), It.IsAny<Func<Task<RegionEntity>>>()))
+                             .ReturnsAsync(regionMock);
+
+            var result = await _regionServiceMock.GetByIdWithCacheAsync(Guid.NewGuid());
+
+            _cacheRepositoryMock.Verify(c => c.GetAsync<RegionEntity>(It.IsAny<string>(), It.IsAny<Func<Task<RegionEntity>>>()), Times.Once);
+            Assert.NotNull(result);
+        }
+
         [Fact(DisplayName = "Should GetById Return Exception When Region Does Not Exist")]
         public async Task ShouldGetByIdReturnExceptionWhenRegionDoesNotExist()
         {
@@ -120,6 +135,18 @@ namespace TechChallange.Test.Domain.Region.Service
             await Assert.ThrowsAsync<RegionNotFoundException>(() => _regionServiceMock.GetByIdAsync(Guid.NewGuid()));
 
             _regionRepositoryMock.Verify(rr => rr.GetByIdAsync(It.IsAny<Guid>()), Times.Once);
+        }
+
+        [Fact(DisplayName = "Should Get By Id Cached Return Exception When Region Does Not Exist")]
+        public async Task ShouldGetByIdCachedReturnExceptionWhenRegionDoesNotExist()
+        {
+
+            _cacheRepositoryMock.Setup(c => c.GetAsync<RegionEntity>(It.IsAny<string>(), It.IsAny<Func<Task<RegionEntity>>>()))
+                                .ReturnsAsync((RegionEntity)null);
+
+            await Assert.ThrowsAsync<RegionNotFoundException>(() => _regionServiceMock.GetByIdWithCacheAsync(Guid.NewGuid()));
+
+            _cacheRepositoryMock.Verify(c => c.GetAsync<RegionEntity>(It.IsAny<string>(), It.IsAny<Func<Task<RegionEntity>>>()), Times.Once);
         }
 
         [Fact(DisplayName = "Should GetByDdd Return Region")]
@@ -149,6 +176,30 @@ namespace TechChallange.Test.Domain.Region.Service
             var result = await _regionServiceMock.GetByDddWithContacts(mockDdd);
 
             _regionRepositoryMock.Verify(rr => rr.GetByDddWithContactsAsync(It.IsAny<string>()), Times.Once);
+            Assert.NotNull(result);
+        }
+
+        [Fact(DisplayName = "Should Get All Paged Region")]
+        public async Task ShouldGetAllPagedRegion()
+        {
+            var regionMock = new List<RegionEntity> { new RegionEntity("Test", "11") };
+
+            _regionRepositoryMock.Setup(rr => rr.GetAllPagedAsync(
+                                           It.IsAny<Expression<Func<RegionEntity, bool>>>(),
+                                           It.IsAny<int>(),
+                                           It.IsAny<int>(),
+                                           It.IsAny<Expression<Func<RegionEntity, dynamic>>>()
+                                       )).ReturnsAsync(regionMock);
+
+            var result = await _regionServiceMock.GetAllPagedAsync(5, 1);
+
+            _regionRepositoryMock.Verify(rr => rr.GetAllPagedAsync(
+                                           It.IsAny<Expression<Func<RegionEntity, bool>>>(),
+                                           It.IsAny<int>(),
+                                           It.IsAny<int>(),
+                                           It.IsAny<Expression<Func<RegionEntity, dynamic>>>()
+                                       ), Times.Once);
+
             Assert.NotNull(result);
         }
     }

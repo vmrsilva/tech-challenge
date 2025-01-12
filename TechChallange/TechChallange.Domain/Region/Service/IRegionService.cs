@@ -1,4 +1,5 @@
-﻿using TechChallange.Domain.Region.Entity;
+﻿using System.Linq.Expressions;
+using TechChallange.Domain.Region.Entity;
 
 namespace TechChallange.Domain.Region.Service
 {
@@ -6,11 +7,12 @@ namespace TechChallange.Domain.Region.Service
     {
         Task CreateAsync(RegionEntity regionEntity);
         Task<RegionEntity> GetByIdAsync(Guid id);
+        Task<RegionEntity> GetByIdWithCacheAsync(Guid id);
         Task<RegionEntity> GetByDdd(string ddd);
         Task DeleteByIdAsync(Guid id);
-        Task<IEnumerable<RegionEntity>> GetAllAsync();
+        Task<IEnumerable<RegionEntity>> GetAllPagedAsync(int pageSize, int page);
         Task UpdateAsync(RegionEntity regionEntity);
-
         Task<RegionEntity> GetByDddWithContacts(string ddd);
+        Task<int> GetCountAsync();
     }
 }

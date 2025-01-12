@@ -16,6 +16,7 @@ namespace TechChallange.Domain.Base.Repository
 
         public Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> search);
         Task<T> GetOneWithIncludeAsync(Expression<Func<T, bool>> search, params Expression<Func<T, object>>[] includes);
-
+        Task<IList<T>> GetPagedAsync(Expression<Func<T, bool>> search, int pageSize, int page, Expression<Func<T, dynamic>> orderDesc);
+        Task<int> GetCountAsync(Expression<Func<T, bool>> search);
     }
 }

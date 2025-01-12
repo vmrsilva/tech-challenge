@@ -1,4 +1,5 @@
-﻿using TechChallange.Domain.Base.Repository;
+﻿using System.Linq.Expressions;
+using TechChallange.Domain.Base.Repository;
 using TechChallange.Domain.Region.Entity;
 using TechChallange.Domain.Region.Repository;
 
@@ -18,24 +19,24 @@ namespace TechChallange.Infrastructure.Repository.Region
             await _baseRepository.AddAsync(entity).ConfigureAwait(false);
         }
 
-        public async Task<IEnumerable<RegionEntity>> GetAllAsync()
+        public async Task<IEnumerable<RegionEntity>> GetAllPagedAsync(Expression<Func<RegionEntity, bool>> search, int pageSize, int page, Expression<Func<RegionEntity, dynamic>> orderDesc)
         {
-            return await _baseRepository.GetAllAsync(r => !r.IsDeleted);
+            return await _baseRepository.GetPagedAsync(search, pageSize, page, orderDesc);
         }
 
         public async Task<RegionEntity> GetByDddAsync(string ddd)
         {
-            return await _baseRepository.GetAsync(r => r.Ddd == ddd).ConfigureAwait(false);
+            return await _baseRepository.GetAsync(r => r.Ddd == ddd && !r.IsDeleted).ConfigureAwait(false);
         }
 
         public async Task<RegionEntity> GetByDddWithContactsAsync(string ddd)
         {
-            return await _baseRepository.GetOneWithIncludeAsync(r => r.Ddd == ddd, r => r.Contacts).ConfigureAwait(false);
+            return await _baseRepository.GetOneWithIncludeAsync(r => r.Ddd == ddd && !r.IsDeleted, r => r.Contacts).ConfigureAwait(false);
         }
 
         public async Task<RegionEntity> GetByIdAsync(Guid id)
         {
-            return await _baseRepository.GetByIdAsync(id).ConfigureAwait(false);    
+            return await _baseRepository.GetByIdAsync(id).ConfigureAwait(false);
         }
 
         public async Task RemoveByIdAsync(Guid id)
@@ -46,6 +47,11 @@ namespace TechChallange.Infrastructure.Repository.Region
         public async Task UpdateAsync(RegionEntity entity)
         {
             await _baseRepository.UpdateAsync(entity).ConfigureAwait(false);
+        }
+
+        public async Task<int> GetCountAsync(Expression<Func<RegionEntity, bool>> search)
+        {
+            return await _baseRepository.GetCountAsync(search).ConfigureAwait(false);
         }
     }
 }
