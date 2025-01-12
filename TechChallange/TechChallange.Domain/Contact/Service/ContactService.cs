@@ -3,6 +3,8 @@ using TechChallange.Domain.Cache;
 using TechChallange.Domain.Contact.Entity;
 using TechChallange.Domain.Contact.Exception;
 using TechChallange.Domain.Contact.Repository;
+using TechChallange.Domain.Region.Exception;
+using TechChallange.Domain.Region.Service;
 
 namespace TechChallange.Domain.Contact.Service
 {
@@ -10,15 +12,22 @@ namespace TechChallange.Domain.Contact.Service
     {
         private readonly IContactRepository _contactRepository;
         private readonly ICacheRepository _cacheRepository;
+        private readonly IRegionService _regionService;
 
-        public ContactService(IContactRepository contactRepository, ICacheRepository cacheRepository)
+        public ContactService(IContactRepository contactRepository, ICacheRepository cacheRepository, IRegionService regionService)
         {
             _contactRepository = contactRepository;
             _cacheRepository = cacheRepository;
+            _regionService = regionService;
         }
 
         public async Task CreateAsync(ContactEntity contactEntity)
         {
+            var regionDb = await _regionService.GetByIdAsync(contactEntity.RegionId);
+
+            if (regionDb == null)
+                throw new RegionNotFoundException();
+
             await _contactRepository.Create(contactEntity).ConfigureAwait(false);
         }
 

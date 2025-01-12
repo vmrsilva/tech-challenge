@@ -6,6 +6,8 @@ using TechChallange.Domain.Contact.Exception;
 using TechChallange.Domain.Contact.Repository;
 using TechChallange.Domain.Contact.Service;
 using TechChallange.Domain.Region.Entity;
+using TechChallange.Domain.Region.Exception;
+using TechChallange.Domain.Region.Service;
 
 namespace TechChallange.Test.Domain.Contact.Service
 {
@@ -13,23 +15,44 @@ namespace TechChallange.Test.Domain.Contact.Service
     {
         private readonly Mock<IContactRepository> _contactRepositoryMock;
         private readonly Mock<ICacheRepository> _cacheRepositoryMock;
+        private readonly Mock<IRegionService> _regionServiceMock;
         private readonly ContactService _contactServiceMock;
 
         public ContactServiceTest()
         {
             _contactRepositoryMock = new Mock<IContactRepository>();
             _cacheRepositoryMock = new Mock<ICacheRepository>();
-            _contactServiceMock = new ContactService(_contactRepositoryMock.Object, _cacheRepositoryMock.Object);
+            _regionServiceMock = new Mock<IRegionService>();
+            _contactServiceMock = new ContactService(_contactRepositoryMock.Object, _cacheRepositoryMock.Object, _regionServiceMock.Object);
         }
 
         [Fact(DisplayName = "Should Create A New Contact With Success")]
         public async Task ShouldCreateANewContactWithSuccess()
         {
-            var contact = new ContactEntity("Test", "12345678", "mail@test.com", Guid.NewGuid());
+            var mockRegionId = Guid.NewGuid();
+            var contact = new ContactEntity("Test", "12345678", "mail@test.com", mockRegionId);
+
+            _regionServiceMock.Setup(rs => rs.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync(new RegionEntity("SP", "11"));
 
             await _contactServiceMock.CreateAsync(contact);
 
             _contactRepositoryMock.Verify(cr => cr.Create(It.IsAny<ContactEntity>()), Times.Once);
+            _regionServiceMock.Verify(rs => rs.GetByIdAsync(It.IsAny<Guid>()), Times.Once);
+        }
+
+        [Fact(DisplayName = "Should Create Return Exception When Region Does Not Exists")]
+        public async Task ShouldCreateReturnExceptionWhenRegionDoesNotExists()
+        {
+            var mockRegionId = Guid.NewGuid();
+            var contact = new ContactEntity("Test", "12345678", "mail@test.com", mockRegionId);
+
+            _regionServiceMock.Setup(rs => rs.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync((RegionEntity)null);
+
+            await Assert.ThrowsAsync<RegionNotFoundException>(
+              () => _contactServiceMock.CreateAsync(contact));
+
+            _contactRepositoryMock.Verify(cr => cr.Create(It.IsAny<ContactEntity>()), Times.Never);
+            _regionServiceMock.Verify(rs => rs.GetByIdAsync(It.IsAny<Guid>()), Times.Once);
         }
 
         [Fact(DisplayName = "Should Update Throw Exception When Contact Does Not Exist")]
