@@ -62,10 +62,32 @@ namespace TechChallange.Test.Domain.Contact.Service
 
             var contact = new ContactEntity("Test", "12345678", "mail@test.com", Guid.NewGuid());
 
+            _regionServiceMock.Setup(rs => rs.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync(new RegionEntity("SP", "11"));
+
             await Assert.ThrowsAsync<ContactNotFoundException>(
                 () => _contactServiceMock.UpdateAsync(contact));
 
             _contactRepositoryMock.Verify(cr => cr.UpdateAsync(It.IsAny<ContactEntity>()), Times.Never);
+            _regionServiceMock.Verify(rs => rs.GetByIdAsync(It.IsAny<Guid>()), Times.Never);
+            _contactRepositoryMock.Verify(cr => cr.GetByIdAsync(It.IsAny<Guid>()), Times.Once);
+        }
+
+
+        [Fact(DisplayName = "Should Update Throw Exception When Region Does Not Exist")]
+        public async Task ShouldUpdateThrowExceptionWhenRegionDoesNotExist()
+        {
+            _contactRepositoryMock.Setup(cr => cr.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync(new ContactEntity("Paul","41410303", "email@mock.com", Guid.NewGuid()));
+
+            var contact = new ContactEntity("Test", "12345678", "mail@test.com", Guid.NewGuid());
+
+            _regionServiceMock.Setup(rs => rs.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync((RegionEntity)null);
+
+            await Assert.ThrowsAsync<RegionNotFoundException>(
+                () => _contactServiceMock.UpdateAsync(contact));
+
+            _contactRepositoryMock.Verify(cr => cr.GetByIdAsync(It.IsAny<Guid>()), Times.Once);
+            _contactRepositoryMock.Verify(cr => cr.UpdateAsync(It.IsAny<ContactEntity>()), Times.Never);
+            _regionServiceMock.Verify(rs => rs.GetByIdAsync(It.IsAny<Guid>()), Times.Once);
         }
 
         [Fact(DisplayName = "Should Update When Contact Exist")]
@@ -74,10 +96,13 @@ namespace TechChallange.Test.Domain.Contact.Service
             var contactMock = new ContactEntity("Test", "12345678", "mail@test.com", Guid.NewGuid());
 
             _contactRepositoryMock.Setup(cr => cr.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync(contactMock);
+            _regionServiceMock.Setup(rs => rs.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync(new RegionEntity("SP", "11"));
 
             await _contactServiceMock.UpdateAsync(contactMock);
 
             _contactRepositoryMock.Verify(cr => cr.UpdateAsync(It.IsAny<ContactEntity>()), Times.Once);
+            _regionServiceMock.Verify(rs => rs.GetByIdAsync(It.IsAny<Guid>()), Times.Once);
+            _contactRepositoryMock.Verify(cr => cr.GetByIdAsync(It.IsAny<Guid>()), Times.Once);
         }
 
         [Fact(DisplayName = "Should Delete Contact Updating Delete Flag")]

@@ -75,6 +75,11 @@ namespace TechChallange.Domain.Contact.Service
             if (contactDb == null)
                 throw new ContactNotFoundException();
 
+            var regionDb = await _regionService.GetByIdAsync(contact.RegionId);
+
+            if (regionDb == null)
+                throw new RegionNotFoundException();
+
             contactDb.Name = contact.Name;
             contactDb.Phone = contact.Phone;
             contactDb.Email = contact.Email;
