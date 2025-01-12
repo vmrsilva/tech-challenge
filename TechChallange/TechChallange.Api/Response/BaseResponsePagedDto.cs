@@ -4,9 +4,9 @@
     {
         public int TotalPages
         {
-            get => CurrentTake == 0 ? 0 : (int)Math.Ceiling((decimal)TotalItems / (TotalItems == 0 ? 1 : (decimal)CurrentTake));
+            get => CurrentPage == 0 ? 0 : (int)Math.Ceiling((decimal)TotalItems / (TotalItems == 0 ? 1 : (decimal)CurrentPage));
         }
         public int TotalItems { get; init; }
-        public int CurrentTake { get; init; }
+        public int CurrentPage { get; init; }
     }
 }

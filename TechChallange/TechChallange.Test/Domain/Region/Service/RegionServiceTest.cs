@@ -1,4 +1,5 @@
 ﻿using Moq;
+using System.Linq.Expressions;
 using TechChallange.Domain.Cache;
 using TechChallange.Domain.Contact.Entity;
 using TechChallange.Domain.Region.Entity;
@@ -149,6 +150,30 @@ namespace TechChallange.Test.Domain.Region.Service
             var result = await _regionServiceMock.GetByDddWithContacts(mockDdd);
 
             _regionRepositoryMock.Verify(rr => rr.GetByDddWithContactsAsync(It.IsAny<string>()), Times.Once);
+            Assert.NotNull(result);
+        }
+
+        [Fact(DisplayName = "Should Get All Paged Region")]
+        public async Task ShouldGetAllPagedRegion()
+        {
+            var regionMock = new List<RegionEntity> { new RegionEntity("Test", "11") };
+
+            _regionRepositoryMock.Setup(rr => rr.GetAllPagedAsync(
+                                           It.IsAny<Expression<Func<RegionEntity, bool>>>(),
+                                           It.IsAny<int>(),
+                                           It.IsAny<int>(),
+                                           It.IsAny<Expression<Func<RegionEntity, dynamic>>>()
+                                       )).ReturnsAsync(regionMock);
+
+            var result = await _regionServiceMock.GetAllPagedAsync(5, 1);
+
+            _regionRepositoryMock.Verify(rr => rr.GetAllPagedAsync(
+                                           It.IsAny<Expression<Func<RegionEntity, bool>>>(),
+                                           It.IsAny<int>(),
+                                           It.IsAny<int>(),
+                                           It.IsAny<Expression<Func<RegionEntity, dynamic>>>()
+                                       ), Times.Once);
+
             Assert.NotNull(result);
         }
     }

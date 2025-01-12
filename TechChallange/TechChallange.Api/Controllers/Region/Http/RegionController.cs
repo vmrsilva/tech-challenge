@@ -118,17 +118,22 @@ namespace TechChallange.Api.Controllers.Region.Http
         }
 
         [HttpGet("get-all")]
-        public async Task<IActionResult> GetAllAsync()
+        public async Task<IActionResult> GetAllPagedAsync([FromQuery] int pageSize, [FromQuery] int page)
         {
-            var regions = await _regionService.GetAllAsync().ConfigureAwait(false);
+            var regions = await _regionService.GetAllPagedAsync(pageSize, page).ConfigureAwait(false);
+
+            var totalItems = await _regionService.GetCountAsync().ConfigureAwait(false);
 
             var response = _mapper.Map<IEnumerable<RegionResponseDto>>(regions);
+            
 
-            return StatusCode(200, new BaseResponseDto<IEnumerable<RegionResponseDto>>
+            return StatusCode(200, new BaseResponsePagedDto<IEnumerable<RegionResponseDto>>
             {
                 Success = true,
                 Error = string.Empty,
-                Data = response
+                Data = response,
+                CurrentPage = page,
+                TotalItems = totalItems
             });
         }
 

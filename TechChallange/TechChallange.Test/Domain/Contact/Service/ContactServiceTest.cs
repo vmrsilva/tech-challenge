@@ -1,9 +1,11 @@
 ﻿using Moq;
+using System.Linq.Expressions;
 using TechChallange.Domain.Cache;
 using TechChallange.Domain.Contact.Entity;
 using TechChallange.Domain.Contact.Exception;
 using TechChallange.Domain.Contact.Repository;
 using TechChallange.Domain.Contact.Service;
+using TechChallange.Domain.Region.Entity;
 
 namespace TechChallange.Test.Domain.Contact.Service
 {
@@ -116,15 +118,23 @@ namespace TechChallange.Test.Domain.Contact.Service
             var contactsList = new List<ContactEntity> { contactMock };
 
             _contactRepositoryMock
-                .Setup(cr => cr.GetAllAsync())
+                .Setup(cr => cr.GetAllPagedAsync(
+                                           It.IsAny<Expression<Func<ContactEntity, bool>>>(),
+                                           It.IsAny<int>(),
+                                           It.IsAny<int>(),
+                                           It.IsAny<Expression<Func<ContactEntity, dynamic>>>()
+                                       ))
                 .ReturnsAsync(contactsList);
 
-            _cacheRepositoryMock.Setup(c => c.GetAsync<IEnumerable<ContactEntity>>(It.IsAny<string>(), It.IsAny<Func<Task<IEnumerable<ContactEntity>>>>()))
-                                .ReturnsAsync((IEnumerable<ContactEntity>)contactsList);
+            var result = await _contactServiceMock.GetAllPagedAsync(5, 1);
 
-            var result = await _contactServiceMock.GetAllAsync();
+            _contactRepositoryMock.Verify(c => c.GetAllPagedAsync(
+                                           It.IsAny<Expression<Func<ContactEntity, bool>>>(),
+                                           It.IsAny<int>(),
+                                           It.IsAny<int>(),
+                                           It.IsAny<Expression<Func<ContactEntity, dynamic>>>()
+                                       ), Times.Once);
 
-            _cacheRepositoryMock.Verify(c => c.GetAsync<IEnumerable<ContactEntity>>(It.IsAny<string>(), It.IsAny<Func<Task<IEnumerable<ContactEntity>>>>()), Times.Once);
             Assert.NotNull(result);
             Assert.Equal(contactMock, result.First());
         }

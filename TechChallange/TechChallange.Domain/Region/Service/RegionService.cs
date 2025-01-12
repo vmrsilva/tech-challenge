@@ -1,4 +1,5 @@
-﻿using TechChallange.Domain.Cache;
+﻿using System.Linq.Expressions;
+using TechChallange.Domain.Cache;
 using TechChallange.Domain.Region.Entity;
 using TechChallange.Domain.Region.Exception;
 using TechChallange.Domain.Region.Repository;
@@ -38,9 +39,9 @@ namespace TechChallange.Domain.Region.Service
             await _regionRepository.UpdateAsync(regionDb).ConfigureAwait(false);
         }
 
-        public async Task<IEnumerable<RegionEntity>> GetAllAsync()
+        public async Task<IEnumerable<RegionEntity>> GetAllPagedAsync(int pageSize, int page)
         {
-            return await _cacheRepository.GetAsync("allRegions", async () => await _regionRepository.GetAllAsync().ConfigureAwait(false));
+            return await _regionRepository.GetAllPagedAsync(r => !r.IsDeleted, pageSize, page, r => r.Name).ConfigureAwait(false);
         }
 
         public async Task<RegionEntity> GetByDdd(string ddd)
@@ -55,12 +56,17 @@ namespace TechChallange.Domain.Region.Service
 
         public async Task<RegionEntity> GetByIdAsync(Guid id)
         {
-           var result = await _regionRepository.GetByIdAsync(id).ConfigureAwait(false);
+            var result = await _regionRepository.GetByIdAsync(id).ConfigureAwait(false);
 
             if (result == null)
                 throw new RegionNotFoundException();
 
             return result;
+        }
+
+        public async Task<int> GetCountAsync()
+        {
+            return await _regionRepository.GetCountAsync(r => !r.IsDeleted).ConfigureAwait(false);
         }
 
         public async Task UpdateAsync(RegionEntity regionEntity)

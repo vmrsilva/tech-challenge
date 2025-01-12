@@ -1,4 +1,5 @@
-﻿using TechChallange.Domain.Cache;
+﻿using System.Runtime.CompilerServices;
+using TechChallange.Domain.Cache;
 using TechChallange.Domain.Contact.Entity;
 using TechChallange.Domain.Contact.Exception;
 using TechChallange.Domain.Contact.Repository;
@@ -21,9 +22,9 @@ namespace TechChallange.Domain.Contact.Service
             await _contactRepository.Create(contactEntity).ConfigureAwait(false);
         }
 
-        public async Task<IEnumerable<ContactEntity>> GetAllAsync()
+        public async Task<IEnumerable<ContactEntity>> GetAllPagedAsync(int pageSize, int page)
         {
-            return await _cacheRepository.GetAsync("allContacts", async () => await _contactRepository.GetAllAsync().ConfigureAwait(false)); 
+            return await _contactRepository.GetAllPagedAsync(c => !c.IsDeleted, pageSize, page, c => c.Name).ConfigureAwait(false);
         }
 
         public async Task<IEnumerable<ContactEntity>> GetByDddAsync(string ddd)
@@ -39,6 +40,11 @@ namespace TechChallange.Domain.Contact.Service
                 throw new ContactNotFoundException();
 
             return contactDb;
+        }
+
+        public async Task<int> GetCountAsync()
+        {
+            return await _contactRepository.GetCountAsync(c => !c.IsDeleted);
         }
 
         public async Task RemoveByIdAsync(Guid id)

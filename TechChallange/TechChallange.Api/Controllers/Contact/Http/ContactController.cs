@@ -52,17 +52,21 @@ namespace TechChallange.Api.Controllers.Contact.Http
         }
 
         [HttpGet("all")]
-        public async Task<IActionResult> GetAllAsync()
+        public async Task<IActionResult> GetAllPagedAsync([FromQuery] int pageSize, [FromQuery] int page)
         {
-            var contacts = await _contactService.GetAllAsync().ConfigureAwait(false);
+            var contacts = await _contactService.GetAllPagedAsync(pageSize,page).ConfigureAwait(false);
+
+            var totalItem = await _contactService.GetCountAsync().ConfigureAwait(false);
 
             var response = _mapper.Map<IEnumerable<ContactResponseDto>>(contacts);
 
-            return StatusCode(200, new BaseResponseDto<IEnumerable<ContactResponseDto>>
+            return StatusCode(200, new BaseResponsePagedDto<IEnumerable<ContactResponseDto>>
             {
                 Success = true,
                 Error = string.Empty,
-                Data = response
+                Data = response,
+                CurrentPage = page,
+                TotalItems = totalItem
             });
         }
 
