@@ -137,11 +137,12 @@ namespace TechChallange.Test.Domain.Contact.Service
             var contactMock = new ContactEntity("Test", "12345678", "mail@test.com", Guid.NewGuid());
             var IdMock = Guid.NewGuid();
 
-            _contactRepositoryMock.Setup(cr => cr.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync(contactMock);
+            _cacheRepositoryMock.Setup(c => c.GetAsync<ContactEntity>(It.IsAny<string>(), It.IsAny<Func<Task<ContactEntity>>>()))
+                               .ReturnsAsync(contactMock);
 
             await _contactServiceMock.GetByIdAsync(IdMock);
 
-            _contactRepositoryMock.Verify(cr => cr.GetByIdAsync(It.IsAny<Guid>()), Times.Once);
+            _cacheRepositoryMock.Verify(c => c.GetAsync<ContactEntity>(It.IsAny<string>(), It.IsAny<Func<Task<ContactEntity>>>()), Times.Once);
         }
 
         [Fact(DisplayName = "Should GetById Throw Exception When Contact Does Not Exist")]
@@ -150,13 +151,16 @@ namespace TechChallange.Test.Domain.Contact.Service
             var contactMock = new ContactEntity("Test", "12345678", "mail@test.com", Guid.NewGuid());
             var IdMock = Guid.NewGuid();
 
-            _contactRepositoryMock.Setup(cr => cr.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync((ContactEntity)null);
+
+            _cacheRepositoryMock.Setup(c => c.GetAsync<ContactEntity>(It.IsAny<string>(), It.IsAny<Func<Task<ContactEntity>>>()))
+                               .ReturnsAsync((ContactEntity)null);
+
 
 
             await Assert.ThrowsAsync<ContactNotFoundException>(
                         () => _contactServiceMock.GetByIdAsync(IdMock));
 
-            _contactRepositoryMock.Verify(cr => cr.GetByIdAsync(It.IsAny<Guid>()), Times.Once);
+            _cacheRepositoryMock.Verify(c => c.GetAsync<ContactEntity>(It.IsAny<string>(), It.IsAny<Func<Task<ContactEntity>>>()), Times.Once);
         }
 
         [Fact(DisplayName = "Should GetAll Return List Of Contacts")]
