@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using TechChallange.Api.Controllers.Region.Dto;
+using TechChallange.Api.Response;
 using TechChallange.Domain.Region.Entity;
 using TechChallange.Domain.Region.Exception;
 using TechChallange.Domain.Region.Service;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace TechChallange.Api.Controllers.Region.Http
 {
@@ -29,17 +31,28 @@ namespace TechChallange.Api.Controllers.Region.Http
                 var regionEntity = _mapper.Map<RegionEntity>(regionDto);
                 await _regionService.CreateAsync(regionEntity).ConfigureAwait(false);
 
-                return Ok();
+                return StatusCode(204, new BaseResponse
+                {
+                    Success = true,
+                    Error = string.Empty
+                });
             }
             catch (RegionAlreadyExistsException ex)
             {
-                return BadRequest(ex.Message);
+                return StatusCode(400, new BaseResponse
+                {
+                    Error = ex.Message,
+                    Success = false
+                });
             }
             catch (Exception)
             {
-                return BadRequest("Ocorreu um erro!");
+                return StatusCode(400, new BaseResponse
+                {
+                    Error = "Ocorreu um erro!",
+                    Success = false
+                });
             }
-
         }
 
         [HttpGet("get-by-id/{id}")]
@@ -49,15 +62,29 @@ namespace TechChallange.Api.Controllers.Region.Http
             {
                 var regionEntity = await _regionService.GetByIdAsync(id).ConfigureAwait(false);
                 var regionDto = _mapper.Map<RegionResponseDto>(regionEntity);
-                return Ok(regionDto);
+
+                return StatusCode(200, new BaseResponseDto<RegionResponseDto>
+                {
+                    Success = true,
+                    Error = string.Empty,
+                    Data = regionDto
+                });
             }
             catch (RegionNotFoundException ex)
             {
-                return BadRequest(ex.Message);
+                return StatusCode(400, new BaseResponse
+                {
+                    Error = ex.Message,
+                    Success = false
+                });
             }
             catch (Exception)
             {
-                return BadRequest("Ocorreu um erro");
+                return StatusCode(400, new BaseResponse
+                {
+                    Error = "Ocorreu um erro!",
+                    Success = false
+                });
             }
 
         }
@@ -67,7 +94,13 @@ namespace TechChallange.Api.Controllers.Region.Http
         {
             var regionEntity = await _regionService.GetByDdd(ddd).ConfigureAwait(false);
             var regionDto = _mapper.Map<RegionResponseDto>(regionEntity);
-            return Ok(regionDto);
+
+            return StatusCode(200, new BaseResponseDto<RegionResponseDto>
+            {
+                Success = true,
+                Error = string.Empty,
+                Data = regionDto
+            });
         }
 
         [HttpGet("get-ddd-with-contacts/{ddd}")]
@@ -75,7 +108,13 @@ namespace TechChallange.Api.Controllers.Region.Http
         {
             var regionEntity = await _regionService.GetByDddWithContacts(ddd).ConfigureAwait(false);
             var regionDto = _mapper.Map<RegionWithContactsResponseDto>(regionEntity);
-            return Ok(regionDto);
+
+            return StatusCode(200, new BaseResponseDto<RegionWithContactsResponseDto>
+            {
+                Success = true,
+                Error = string.Empty,
+                Data = regionDto
+            });
         }
 
         [HttpGet("get-all")]
@@ -85,7 +124,12 @@ namespace TechChallange.Api.Controllers.Region.Http
 
             var response = _mapper.Map<IEnumerable<RegionResponseDto>>(regions);
 
-            return Ok(response);
+            return StatusCode(200, new BaseResponseDto<IEnumerable<RegionResponseDto>>
+            {
+                Success = true,
+                Error = string.Empty,
+                Data = response
+            });
         }
 
         [HttpPut]
@@ -97,17 +141,28 @@ namespace TechChallange.Api.Controllers.Region.Http
 
                 await _regionService.UpdateAsync(regionEntity).ConfigureAwait(false);
 
-                return Ok();
+                return StatusCode(204, new BaseResponse
+                {
+                    Success = true,
+                    Error = string.Empty
+                });
             }
             catch (RegionNotFoundException ex)
             {
-                return BadRequest(ex.Message);
+                return StatusCode(400, new BaseResponse
+                {
+                    Error = ex.Message,
+                    Success = false
+                });
             }
             catch (Exception)
             {
-                return BadRequest("Ocorreu um erro!");
+                return StatusCode(400, new BaseResponse
+                {
+                    Error = "Ocorreu um erro!",
+                    Success = false
+                });
             }
-
         }
 
         [HttpDelete("{id}")]
@@ -117,15 +172,27 @@ namespace TechChallange.Api.Controllers.Region.Http
             {
                 await _regionService.DeleteByIdAsync(id).ConfigureAwait(false);
 
-                return Ok();
+                return StatusCode(204, new BaseResponse
+                {
+                    Success = true,
+                    Error = string.Empty
+                });
             }
             catch (RegionNotFoundException ex)
             {
-                return BadRequest(ex.Message);
+                return StatusCode(400, new BaseResponse
+                {
+                    Error = ex.Message,
+                    Success = false
+                });
             }
             catch (Exception)
             {
-                return BadRequest("Ocorreu um erro!");
+                return StatusCode(400, new BaseResponse
+                {
+                    Error = "Ocorreu um erro!",
+                    Success = false
+                });
             }
 
         }

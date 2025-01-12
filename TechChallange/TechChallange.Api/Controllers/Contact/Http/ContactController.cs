@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using TechChallange.Api.Controllers.Contact.Dto;
+using TechChallange.Api.Response;
 using TechChallange.Domain.Contact.Entity;
 using TechChallange.Domain.Contact.Exception;
 using TechChallange.Domain.Contact.Service;
@@ -15,7 +15,7 @@ namespace TechChallange.Api.Controllers.Contact.Http
         private readonly IContactService _contactService;
         private readonly IMapper _mapper;
 
-        public ContactController(IContactService contactService, 
+        public ContactController(IContactService contactService,
                                 IMapper mapper)
         {
             _contactService = contactService;
@@ -29,7 +29,11 @@ namespace TechChallange.Api.Controllers.Contact.Http
 
             await _contactService.CreateAsync(contactEntity).ConfigureAwait(false);
 
-            return Ok();
+            return StatusCode(204, new BaseResponse
+            {
+                Success = true,
+                Error = string.Empty
+            });
         }
 
         [HttpGet("by-ddd/{ddd}")]
@@ -39,7 +43,12 @@ namespace TechChallange.Api.Controllers.Contact.Http
 
             var response = _mapper.Map<IEnumerable<ContactResponseDto>>(contacts);
 
-            return Ok(response);
+            return StatusCode(200, new BaseResponseDto<IEnumerable<ContactResponseDto>>
+            {
+                Success = true,
+                Error = string.Empty,
+                Data = response
+            });
         }
 
         [HttpGet("all")]
@@ -49,7 +58,12 @@ namespace TechChallange.Api.Controllers.Contact.Http
 
             var response = _mapper.Map<IEnumerable<ContactResponseDto>>(contacts);
 
-            return Ok(response);
+            return StatusCode(200, new BaseResponseDto<IEnumerable<ContactResponseDto>>
+            {
+                Success = true,
+                Error = string.Empty,
+                Data = response
+            });
         }
 
         [HttpGet("by-id/{id}")]
@@ -61,15 +75,28 @@ namespace TechChallange.Api.Controllers.Contact.Http
 
                 var response = _mapper.Map<ContactResponseDto>(contact);
 
-                return Ok(response);
+                return StatusCode(200, new BaseResponseDto<ContactResponseDto>
+                {
+                    Success = true,
+                    Error = string.Empty,
+                    Data = response
+                });
             }
             catch (ContactNotFoundException ex)
             {
-                return BadRequest(ex.Message);
+                return StatusCode(400, new BaseResponse
+                {
+                    Error = ex.Message,
+                    Success = false
+                });
             }
             catch (Exception)
             {
-                return BadRequest("Ocorreu um erro!");
+                return StatusCode(400, new BaseResponse
+                {
+                    Error = "Ocorreu um erro!",
+                    Success = false
+                });
             }
 
         }
@@ -83,15 +110,27 @@ namespace TechChallange.Api.Controllers.Contact.Http
 
                 await _contactService.UpdateAsync(contactEntity).ConfigureAwait(false);
 
-                return Ok();
+                return StatusCode(204, new BaseResponse
+                {
+                    Success = true,
+                    Error = string.Empty
+                });
             }
             catch (ContactNotFoundException ex)
             {
-                return BadRequest(ex.Message);
+                return StatusCode(400, new BaseResponse
+                {
+                    Error = ex.Message,
+                    Success = false
+                });
             }
             catch (Exception)
             {
-                return BadRequest("Ocorreu um erro!");
+                return StatusCode(400, new BaseResponse
+                {
+                    Error = "Ocorreu um erro!",
+                    Success = false
+                });
             }
         }
 
@@ -101,17 +140,29 @@ namespace TechChallange.Api.Controllers.Contact.Http
             try
             {
                 await _contactService.RemoveByIdAsync(id).ConfigureAwait(false);
+
+                return StatusCode(204, new BaseResponse
+                {
+                    Success = true,
+                    Error = string.Empty
+                });
             }
             catch (ContactNotFoundException ex)
             {
-                return BadRequest(ex.Message);
+                return StatusCode(400, new BaseResponse
+                {
+                    Error = ex.Message,
+                    Success = false
+                });
             }
             catch (Exception)
             {
-                return BadRequest("Ocorreu um erro!");
+                return StatusCode(400, new BaseResponse
+                {
+                    Error = "Ocorreu um erro!",
+                    Success = false
+                });
             }
-
-            return Ok();
         }
 
     }
