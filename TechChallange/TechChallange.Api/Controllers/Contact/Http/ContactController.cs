@@ -5,6 +5,7 @@ using TechChallange.Api.Response;
 using TechChallange.Domain.Contact.Entity;
 using TechChallange.Domain.Contact.Exception;
 using TechChallange.Domain.Contact.Service;
+using TechChallange.Domain.Region.Exception;
 
 namespace TechChallange.Api.Controllers.Contact.Http
 {
@@ -25,15 +26,35 @@ namespace TechChallange.Api.Controllers.Contact.Http
         [HttpPost]
         public async Task<IActionResult> CreateAsync([FromBody] ContactCreateDto contactDto)
         {
-            var contactEntity = _mapper.Map<ContactEntity>(contactDto);
-
-            await _contactService.CreateAsync(contactEntity).ConfigureAwait(false);
-
-            return StatusCode(204, new BaseResponse
+            try
             {
-                Success = true,
-                Error = string.Empty
-            });
+                var contactEntity = _mapper.Map<ContactEntity>(contactDto);
+
+                await _contactService.CreateAsync(contactEntity).ConfigureAwait(false);
+
+                return StatusCode(204, new BaseResponse
+                {
+                    Success = true,
+                    Error = string.Empty
+                });
+            }
+            catch (RegionNotFoundException ex)
+            {
+                return StatusCode(400, new BaseResponse
+                {
+                    Success = false,
+                    Error = ex.Message
+                });
+            }
+            catch (Exception)
+            {
+                return StatusCode(400, new BaseResponse
+                {
+                    Success = false,
+                    Error = "Ocorreu um erro!"
+                });
+            }
+
         }
 
         [HttpGet("by-ddd/{ddd}")]
@@ -121,6 +142,14 @@ namespace TechChallange.Api.Controllers.Contact.Http
                 });
             }
             catch (ContactNotFoundException ex)
+            {
+                return StatusCode(400, new BaseResponse
+                {
+                    Error = ex.Message,
+                    Success = false
+                });
+            }
+            catch (RegionNotFoundException ex)
             {
                 return StatusCode(400, new BaseResponse
                 {
