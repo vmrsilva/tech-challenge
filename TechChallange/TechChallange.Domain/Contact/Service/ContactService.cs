@@ -43,7 +43,7 @@ namespace TechChallange.Domain.Contact.Service
 
         public async Task<ContactEntity> GetByIdAsync(Guid id)
         {
-            var contactDb = await _contactRepository.GetByIdAsync(id).ConfigureAwait(false);
+            var contactDb = await _cacheRepository.GetAsync(id.ToString(), async () => await _contactRepository.GetByIdAsync(id).ConfigureAwait(false));
 
             if (contactDb == null)
                 throw new ContactNotFoundException();

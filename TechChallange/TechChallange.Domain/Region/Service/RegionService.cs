@@ -64,6 +64,16 @@ namespace TechChallange.Domain.Region.Service
             return result;
         }
 
+        public async Task<RegionEntity> GetByIdWithCacheAsync(Guid id)
+        {
+            var result = await _cacheRepository.GetAsync(id.ToString(), async () => await _regionRepository.GetByIdAsync(id).ConfigureAwait(false));
+
+            if (result == null)
+                throw new RegionNotFoundException();
+
+            return result;
+        }
+
         public async Task<int> GetCountAsync()
         {
             return await _regionRepository.GetCountAsync(r => !r.IsDeleted).ConfigureAwait(false);

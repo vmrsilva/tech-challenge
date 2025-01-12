@@ -7,6 +7,7 @@ namespace TechChallange.Domain.Region.Service
     {
         Task CreateAsync(RegionEntity regionEntity);
         Task<RegionEntity> GetByIdAsync(Guid id);
+        Task<RegionEntity> GetByIdWithCacheAsync(Guid id);
         Task<RegionEntity> GetByDdd(string ddd);
         Task DeleteByIdAsync(Guid id);
         Task<IEnumerable<RegionEntity>> GetAllPagedAsync(int pageSize, int page);

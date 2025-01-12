@@ -54,7 +54,7 @@ namespace TechChallange.Api.Controllers.Contact.Http
         [HttpGet("all")]
         public async Task<IActionResult> GetAllPagedAsync([FromQuery] int pageSize, [FromQuery] int page)
         {
-            var contacts = await _contactService.GetAllPagedAsync(pageSize,page).ConfigureAwait(false);
+            var contacts = await _contactService.GetAllPagedAsync(pageSize, page).ConfigureAwait(false);
 
             var totalItem = await _contactService.GetCountAsync().ConfigureAwait(false);
 
@@ -75,7 +75,7 @@ namespace TechChallange.Api.Controllers.Contact.Http
         {
             try
             {
-                var contact = _contactService.GetByIdAsync(id).ConfigureAwait(false);
+                var contact = await _contactService.GetByIdAsync(id).ConfigureAwait(false);
 
                 var response = _mapper.Map<ContactResponseDto>(contact);
 

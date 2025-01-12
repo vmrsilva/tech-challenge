@@ -60,7 +60,7 @@ namespace TechChallange.Api.Controllers.Region.Http
         {
             try
             {
-                var regionEntity = await _regionService.GetByIdAsync(id).ConfigureAwait(false);
+                var regionEntity = await _regionService.GetByIdWithCacheAsync(id).ConfigureAwait(false);
                 var regionDto = _mapper.Map<RegionResponseDto>(regionEntity);
 
                 return StatusCode(200, new BaseResponseDto<RegionResponseDto>
