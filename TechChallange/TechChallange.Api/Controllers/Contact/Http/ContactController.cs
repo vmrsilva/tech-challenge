@@ -87,7 +87,8 @@ namespace TechChallange.Api.Controllers.Contact.Http
                 Error = string.Empty,
                 Data = response,
                 CurrentPage = page,
-                TotalItems = totalItem
+                TotalItems = totalItem,
+                ItemsPerPage = pageSize
             });
         }
 

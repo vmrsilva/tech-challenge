@@ -133,7 +133,8 @@ namespace TechChallange.Api.Controllers.Region.Http
                 Error = string.Empty,
                 Data = response,
                 CurrentPage = page,
-                TotalItems = totalItems
+                TotalItems = totalItems,
+                ItemsPerPage = pageSize
             });
         }
 
