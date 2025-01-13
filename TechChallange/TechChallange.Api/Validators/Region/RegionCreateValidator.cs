@@ -11,7 +11,7 @@ namespace TechChallange.Api.Validators.Region
             .NotEmpty()
             .WithMessage("O nome é obrigatório.")
             .MaximumLength(100)
-            .WithMessage("O nome não pode exceder 50 caracteres.");
+            .WithMessage("O nome não pode exceder 100 caracteres.");
 
             RuleFor(c => c.Ddd)
               .NotEmpty()
