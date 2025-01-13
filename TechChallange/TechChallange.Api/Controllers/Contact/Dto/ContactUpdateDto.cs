@@ -1,6 +1,6 @@
 ﻿namespace TechChallange.Api.Controllers.Contact.Dto
 {
-    public class ContactUpdateDto
+    public record ContactUpdateDto
     {
         public Guid Id { get; init; }
         public string Name { get; init; }
