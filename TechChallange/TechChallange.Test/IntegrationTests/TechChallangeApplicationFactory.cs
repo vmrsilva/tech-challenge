@@ -1,58 +1,18 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Mvc.Testing;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Hosting;
 using Testcontainers.MsSql;
 using Microsoft.EntityFrameworkCore;
 using TechChallange.Infrastructure.Context;
-using Microsoft.Extensions.Options;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Data.SqlClient;
 using TechChallange.Domain.Region.Entity;
 
 namespace TechChallange.Test.IntegrationTests
 {
-    //public class TechChallangeApplicationFactory : WebApplicationFactory<Program>, IAsyncLifetime
-    //{
-    //    private readonly MsSqlContainer _sqlContainer = new MsSqlBuilder().Build();
-
-    //    protected override IHost CreateHost(IHostBuilder builder)
-    //    {
-    //        builder.ConfigureServices(services =>
-    //        {
-    //            var x = services.SingleOrDefault(
-    //                d => d.ServiceType == typeof(DbContextOptions<TechChallangeContext>
-    //                ));
-
-    //            services.Remove(x!);
-
-    //            services.AddDbContext<TechChallangeContext>(Options =>
-    //                Options.UseSqlServer(_sqlContainer.GetConnectionString())
-    //            );
-
-    //        });
-
-    //        return base.CreateHost(builder);
-    //    }
-    //    public async Task InitializeAsync()
-    //    {
-    //        await _sqlContainer.StartAsync();
-    //        Environment.SetEnvironmentVariable("ConnectionStrings.Database", _sqlContainer.GetConnectionString());
-    //    }
-
-    //    async Task IAsyncLifetime.DisposeAsync()
-    //    {
-    //        await _sqlContainer.StopAsync();
-    //    }
-    //}
-
     public class TechChallangeApplicationFactory : WebApplicationFactory<Program>, IAsyncLifetime
     {
         private readonly MsSqlContainer _sqlContainer = new MsSqlBuilder().Build();
+
         private string? _connectionString;
 
         protected override IHost CreateHost(IHostBuilder builder)
@@ -103,7 +63,7 @@ namespace TechChallange.Test.IntegrationTests
         private async Task WaitForDatabaseAsync()
         {
             using var connection = new SqlConnection(_connectionString);
-            for (int i = 0; i < 10; i++)  // Tenta por até 10 segundos
+            for (int i = 0; i < 10; i++)
             {
                 try
                 {

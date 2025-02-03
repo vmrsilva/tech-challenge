@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
+﻿using System.Net;
 using System.Text.Json;
-using System.Threading.Tasks;
 using TechChallange.Api.Controllers.Region.Dto;
 using TechChallange.Api.Response;
 
@@ -32,6 +27,7 @@ namespace TechChallange.Test.IntegrationTests.Controllers
                     new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.NotNull(result?.Data);
         }
     }
 }
